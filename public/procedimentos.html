@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Procedimentos</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="app">
+
+    <aside class="sidebar">
+
+      <div class="sidebar-brand">
+
+        <div class="brand-icon">CP</div>
+
+        <div>
+          <h1>Procedimentos</h1>
+          <span>Controle Operacional</span>
+        </div>
+
+      </div>
+
+
+      <nav class="sidebar-menu">
+
+        <a href="index.html" class="menu-item">
+
+          <span class="menu-icon">⌂</span>
+          <span>Dashboard</span>
+
+        </a>
+
+
+        <a href="procedimentos.html" class="menu-item active">
+
+          <span class="menu-icon">▤</span>
+          <span>Procedimentos</span>
+
+        </a>
+
+
+        <a href="adicionar.html" class="menu-item">
+
+          <span class="menu-icon">＋</span>
+          <span>Adicionar procedimento</span>
+
+        </a>
+
+      </nav>
+
+
+      <div class="sidebar-footer">
+
+        <button
+          type="button"
+          id="btnLogout"
+          class="logout-button"
+        >
+          Sair
+        </button>
+
+        <span>Sistema de Controle</span>
+
+        <small>MOP • SOP • EOP</small>
+
+      </div>
+
+    </aside>
+
+
+    <main class="main">
+
+      <header class="topbar">
+
+        <div class="topbar-title">
+
+          <h2>
+            Controle de Procedimentos
+          </h2>
+
+        </div>
+
+
+        <div class="topbar-filters">
+
+          <div class="filter-group">
+
+            <label for="filtroSite">
+              Site
+            </label>
+
+            <select id="filtroSite">
+
+              <option value="Todos">
+                Todos
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="filter-group">
+
+            <label for="filtroDescricaoProjeto">
+              Descrição do projeto
+            </label>
+
+            <select id="filtroDescricaoProjeto">
+
+              <option value="Todas">
+                Todas
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="filter-group">
+
+            <label for="filtroDocumento">
+              Documento
+            </label>
+
+            <select id="filtroDocumento">
+
+              <option value="Todos">
+                Todos
+              </option>
+
+              <option value="Principal">
+                Principal
+              </option>
+
+              <option value="Replica">
+                Réplica
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+      </header>
+
+
+      <section class="content">
+
+        <div class="page-heading">
+
+          <div>
+
+            <h2>
+              Procedimentos
+            </h2>
+
+            <p>
+              Consulte, filtre, edite ou exclua os procedimentos cadastrados.
+            </p>
+
+          </div>
+
+
+          <a
+            href="adicionar.html"
+            class="btn-primary"
+          >
+            + Adicionar procedimento
+          </a>
+
+        </div>
+
+
+        <div class="table-card">
+
+          <div class="table-toolbar">
+
+            <div class="search-box">
+
+              <input
+                type="text"
+                id="campoBusca"
+                placeholder="Buscar por descrição, título, cliente, site ou release..."
+              >
+
+            </div>
+
+
+            <div class="toolbar-filters">
+
+              <select id="filtroTipoTabela">
+
+                <option value="Todos">
+                  Todos os tipos
+                </option>
+
+                <option value="MOP">
+                  MOP
+                </option>
+
+                <option value="SOP">
+                  SOP
+                </option>
+
+                <option value="EOP">
+                  EOP
+                </option>
+
+              </select>
+
+
+              <select id="filtroEtapaTabela">
+
+                <option value="Todas">
+                  Todas as etapas
+                </option>
+
+                <option value="Em elaboração">
+                  Em elaboração
+                </option>
+
+                <option value="Dryrun">
+                  Dryrun
+                </option>
+
+                <option value="Revisão da qualidade">
+                  Revisão da qualidade
+                </option>
+
+                <option value="Análise de risco">
+                  Análise de risco
+                </option>
+
+                <option value="Validação interna">
+                  Validação interna
+                </option>
+
+                <option value="Enviado ao cliente">
+                  Enviado ao cliente
+                </option>
+
+                <option value="Completo">
+                  Completo
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <div class="table-info">
+
+            Total encontrado:
+
+            <strong id="totalEncontrado">
+              0
+            </strong>
+
+          </div>
+
+
+          <div class="table-responsive">
+
+            <table class="procedures-table">
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Descrição do projeto
+                  </th>
+
+                  <th>
+                    Título
+                  </th>
+
+                  <th>
+                    Cliente
+                  </th>
+
+                  <th>
+                    Site
+                  </th>
+
+                  <th>
+                    Tipo
+                  </th>
+
+                  <th>
+                    Documento
+                  </th>
+
+                  <th>
+                    Release
+                  </th>
+
+                  <th>
+                    Etapa
+                  </th>
+
+                  <th class="actions-column">
+                    Ações
+                  </th>
+
+                </tr>
+
+              </thead>
+
+
+              <tbody id="tabelaProcedimentos">
+
+                <tr>
+
+                  <td
+                    colspan="9"
+                    class="empty-table"
+                  >
+                    Nenhum procedimento carregado.
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =====================================================
+       MODAL DE EDIÇÃO
+  ====================================================== -->
+
+  <div
+    class="modal-overlay"
+    id="modalEdicao"
+  >
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+
+          <h3>
+            Editar procedimento
+          </h3>
+
+          <p>
+            Altere as informações necessárias.
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="modal-close"
+          id="btnFecharModal"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="formEdicao">
+
+        <input
+          type="hidden"
+          id="editarId"
+        >
+
+
+        <div class="form-grid">
+
+          <div class="form-group">
+
+            <label for="editarDescricaoProjeto">
+              Descrição do projeto
+            </label>
+
+            <textarea
+              id="editarDescricaoProjeto"
+              rows="4"
+              placeholder="Descrição do projeto"
+            ></textarea>
+
+            <small class="field-help">
+              Este campo não é obrigatório.
+            </small>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="editarTitulo">
+              Título do procedimento
+            </label>
+
+            <input
+              type="text"
+              id="editarTitulo"
+              required
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="editarCliente">
+              Cliente
+            </label>
+
+            <input
+              type="text"
+              id="editarCliente"
+              required
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="editarSite">
+              Site
+            </label>
+
+            <input
+              type="text"
+              id="editarSite"
+              required
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="editarTipo">
+              Tipo de procedimento
+            </label>
+
+            <select
+              id="editarTipo"
+              required
+            >
+
+              <option value="MOP">
+                MOP
+              </option>
+
+              <option value="SOP">
+                SOP
+              </option>
+
+              <option value="EOP">
+                EOP
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="editarDocumento">
+              Documento
+            </label>
+
+            <select
+              id="editarDocumento"
+              required
+            >
+
+              <option value="Principal">
+                Principal
+              </option>
+
+              <option value="Replica">
+                Réplica
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="editarRelease">
+              Número de Release
+            </label>
+
+            <input
+              type="text"
+              id="editarRelease"
+              placeholder="Pode ficar vazio"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="editarEtapa">
+              Etapa
+            </label>
+
+            <select
+              id="editarEtapa"
+              required
+            >
+
+              <option value="Em elaboração">
+                Em elaboração
+              </option>
+
+              <option value="Dryrun">
+                Dryrun
+              </option>
+
+              <option value="Revisão da qualidade">
+                Revisão da qualidade
+              </option>
+
+              <option value="Análise de risco">
+                Análise de risco
+              </option>
+
+              <option value="Validação interna">
+                Validação interna
+              </option>
+
+              <option value="Enviado ao cliente">
+                Enviado ao cliente
+              </option>
+
+              <option value="Completo">
+                Completo
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="form-message"
+          id="mensagemEdicao"
+        ></div>
+
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn-cancel"
+            id="btnCancelarEdicao"
+          >
+            Cancelar
+          </button>
+
+
+          <button
+            type="submit"
+            class="btn-primary button-element"
+          >
+            Salvar alterações
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MODAL DE EXCLUSÃO
+  ====================================================== -->
+
+  <div
+    class="modal-overlay"
+    id="modalExclusao"
+  >
+
+    <div class="modal modal-small">
+
+      <div class="modal-header">
+
+        <div>
+
+          <h3>
+            Excluir procedimento
+          </h3>
+
+          <p>
+            Esta ação não poderá ser desfeita.
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="modal-close"
+          id="btnFecharExclusao"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="delete-confirmation">
+
+        <p>
+          Deseja realmente excluir este procedimento?
+        </p>
+
+        <strong id="procedimentoExcluirTexto">
+          -
+        </strong>
+
+      </div>
+
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="btn-cancel"
+          id="btnCancelarExclusao"
+        >
+          Cancelar
+        </button>
+
+
+        <button
+          type="button"
+          class="btn-danger"
+          id="btnConfirmarExclusao"
+        >
+          Excluir procedimento
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script src="procedimentos.js"></script>
+
+</body>
+
+</html>

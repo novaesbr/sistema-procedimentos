@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Controle de Procedimentos
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- =========================
+         BARRA LATERAL
+    ========================== -->
+
+    <aside class="sidebar">
+
+      <div class="sidebar-brand">
+
+        <div class="brand-icon">
+          CP
+        </div>
+
+        <div>
+          <h1>
+            Procedimentos
+          </h1>
+
+          <span>
+            Controle Operacional
+          </span>
+        </div>
+
+      </div>
+
+
+      <nav class="sidebar-menu">
+
+        <a
+          href="index.html"
+          class="menu-item active"
+        >
+          <span class="menu-icon">
+            ⌂
+          </span>
+
+          <span>
+            Dashboard
+          </span>
+        </a>
+
+
+        <a
+          href="procedimentos.html"
+          class="menu-item"
+        >
+          <span class="menu-icon">
+            ▤
+          </span>
+
+          <span>
+            Procedimentos
+          </span>
+        </a>
+
+
+        <a
+          href="adicionar.html"
+          class="menu-item"
+        >
+          <span class="menu-icon">
+            ＋
+          </span>
+
+          <span>
+            Adicionar procedimento
+          </span>
+        </a>
+
+      </nav>
+
+
+      <div class="sidebar-footer">
+
+        <button
+          type="button"
+          id="btnLogout"
+          class="logout-button"
+        >
+          Sair
+        </button>
+
+
+        <span>
+          Sistema de Controle
+        </span>
+
+        <small>
+          MOP • SOP • EOP
+        </small>
+
+      </div>
+
+    </aside>
+
+
+    <!-- =========================
+         CONTEÚDO
+    ========================== -->
+
+    <main class="main">
+
+      <!-- =========================
+           BARRA SUPERIOR
+      ========================== -->
+
+      <header class="topbar">
+
+        <div class="topbar-title">
+
+          <h2>
+            Controle de Procedimentos
+          </h2>
+
+        </div>
+
+
+        <div class="topbar-filters">
+
+          <div class="filter-group">
+
+            <label for="filtroSite">
+              Site
+            </label>
+
+            <select id="filtroSite">
+
+              <option value="Todos">
+                Todos
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="filter-group">
+
+            <label for="filtroDescricaoProjeto">
+              Descrição do projeto
+            </label>
+
+            <select id="filtroDescricaoProjeto">
+
+              <option value="Todas">
+                Todas
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="filter-group">
+
+            <label for="filtroDocumento">
+              Documento
+            </label>
+
+            <select id="filtroDocumento">
+
+              <option value="Todos">
+                Todos
+              </option>
+
+              <option value="Principal">
+                Principal
+              </option>
+
+              <option value="Replica">
+                Réplica
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+      </header>
+
+
+      <!-- =========================
+           ÁREA PRINCIPAL
+      ========================== -->
+
+      <section class="content">
+
+        <div class="page-heading">
+
+          <div>
+
+            <h2>
+              Dashboard
+            </h2>
+
+            <p>
+              Visão geral dos procedimentos cadastrados.
+            </p>
+
+          </div>
+
+
+          <a
+            href="adicionar.html"
+            class="btn-primary"
+          >
+            + Adicionar procedimento
+          </a>
+
+        </div>
+
+
+        <!-- =========================
+             CARDS
+        ========================== -->
+
+        <div class="summary-grid">
+
+          <div class="summary-card total">
+
+            <span class="summary-label">
+              Procedimentos
+            </span>
+
+            <strong id="cardTotal">
+              0
+            </strong>
+
+            <small>
+              Total cadastrado
+            </small>
+
+          </div>
+
+
+          <div class="summary-card mop">
+
+            <span class="summary-label">
+              MOP
+            </span>
+
+            <strong id="cardMop">
+              0
+            </strong>
+
+            <small>
+              Procedimentos MOP
+            </small>
+
+          </div>
+
+
+          <div class="summary-card sop">
+
+            <span class="summary-label">
+              SOP
+            </span>
+
+            <strong id="cardSop">
+              0
+            </strong>
+
+            <small>
+              Procedimentos SOP
+            </small>
+
+          </div>
+
+
+          <div class="summary-card eop">
+
+            <span class="summary-label">
+              EOP
+            </span>
+
+            <strong id="cardEop">
+              0
+            </strong>
+
+            <small>
+              Procedimentos EOP
+            </small>
+
+          </div>
+
+
+          <div class="summary-card complete">
+
+            <span class="summary-label">
+              Completos
+            </span>
+
+            <strong id="cardCompleto">
+              0
+            </strong>
+
+            <small>
+              Etapa concluída
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <!-- =========================
+             GRÁFICOS
+        ========================== -->
+
+        <div class="charts-grid">
+
+          <!-- GRÁFICO TIPOS -->
+
+          <article class="chart-card">
+
+            <div class="chart-card-header">
+
+              <div>
+
+                <h3>
+                  Procedimentos por tipo
+                </h3>
+
+                <p>
+                  Distribuição entre MOP, SOP e EOP
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="chart-content">
+
+              <div class="donut-wrapper">
+
+                <canvas id="graficoTipos"></canvas>
+
+
+                <div class="donut-center">
+
+                  <strong id="totalTipos">
+                    0
+                  </strong>
+
+                  <span>
+                    Total
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div
+                class="chart-legend"
+                id="legendaTipos"
+              ></div>
+
+            </div>
+
+          </article>
+
+
+          <!-- GRÁFICO ETAPAS -->
+
+          <article class="chart-card">
+
+            <div class="chart-card-header">
+
+              <div>
+
+                <h3>
+                  Procedimentos por etapa
+                </h3>
+
+                <p>
+                  Situação atual dos procedimentos
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="chart-content">
+
+              <div class="donut-wrapper">
+
+                <canvas id="graficoEtapas"></canvas>
+
+
+                <div class="donut-center">
+
+                  <strong id="totalEtapas">
+                    0
+                  </strong>
+
+                  <span>
+                    Total
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div
+                class="chart-legend"
+                id="legendaEtapas"
+              ></div>
+
+            </div>
+
+          </article>
+
+        </div>
+
+
+        <!-- =========================
+             RESUMO DAS ETAPAS
+        ========================== -->
+
+        <div class="section-title">
+
+          <div>
+
+            <h3>
+              Etapas dos procedimentos
+            </h3>
+
+            <p>
+              Acompanhamento do fluxo de elaboração.
+            </p>
+
+          </div>
+
+
+          <a
+            href="procedimentos.html"
+            class="btn-secondary"
+          >
+            Ver procedimentos
+          </a>
+
+        </div>
+
+
+        <div class="stage-grid">
+
+          <div class="stage-card">
+
+            <span
+              class="stage-number"
+              id="etapaElaboracao"
+            >
+              0
+            </span>
+
+            <span>
+              Em elaboração
+            </span>
+
+          </div>
+
+
+          <div class="stage-card">
+
+            <span
+              class="stage-number"
+              id="etapaDryrun"
+            >
+              0
+            </span>
+
+            <span>
+              Dryrun
+            </span>
+
+          </div>
+
+
+          <div class="stage-card">
+
+            <span
+              class="stage-number"
+              id="etapaQualidade"
+            >
+              0
+            </span>
+
+            <span>
+              Revisão da qualidade
+            </span>
+
+          </div>
+
+
+          <div class="stage-card">
+
+            <span
+              class="stage-number"
+              id="etapaRisco"
+            >
+              0
+            </span>
+
+            <span>
+              Análise de risco
+            </span>
+
+          </div>
+
+
+          <div class="stage-card">
+
+            <span
+              class="stage-number"
+              id="etapaValidacao"
+            >
+              0
+            </span>
+
+            <span>
+              Validação interna
+            </span>
+
+          </div>
+
+
+          <div class="stage-card">
+
+            <span
+              class="stage-number"
+              id="etapaCliente"
+            >
+              0
+            </span>
+
+            <span>
+              Enviado ao cliente
+            </span>
+
+          </div>
+
+
+          <div class="stage-card complete-stage">
+
+            <span
+              class="stage-number"
+              id="etapaCompleto"
+            >
+              0
+            </span>
+
+            <span>
+              Completo
+            </span>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>

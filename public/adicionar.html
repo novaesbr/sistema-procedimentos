@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Adicionar procedimento</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="app">
+
+    <aside class="sidebar">
+
+      <div class="sidebar-brand">
+
+        <div class="brand-icon">CP</div>
+
+        <div>
+          <h1>Procedimentos</h1>
+          <span>Controle Operacional</span>
+        </div>
+
+      </div>
+
+
+      <nav class="sidebar-menu">
+
+        <a href="index.html" class="menu-item">
+          <span class="menu-icon">⌂</span>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="procedimentos.html" class="menu-item">
+          <span class="menu-icon">▤</span>
+          <span>Procedimentos</span>
+        </a>
+
+        <a href="adicionar.html" class="menu-item active">
+          <span class="menu-icon">＋</span>
+          <span>Adicionar procedimento</span>
+        </a>
+
+      </nav>
+
+
+      <div class="sidebar-footer">
+
+        <button
+          type="button"
+          id="btnLogout"
+          class="logout-button"
+        >
+          Sair
+        </button>
+
+        <span>Sistema de Controle</span>
+
+        <small>MOP • SOP • EOP</small>
+
+      </div>
+
+    </aside>
+
+
+    <main class="main">
+
+      <header class="topbar">
+
+        <div class="topbar-title">
+
+          <h2>
+            Controle de Procedimentos
+          </h2>
+
+        </div>
+
+
+        <div class="topbar-actions-simple">
+
+          <a
+            href="procedimentos.html"
+            class="topbar-link"
+          >
+            Ver procedimentos
+          </a>
+
+        </div>
+
+      </header>
+
+
+      <section class="content">
+
+        <div class="page-heading">
+
+          <div>
+
+            <h2>
+              Adicionar procedimento
+            </h2>
+
+            <p>
+              Cadastre manualmente ou importe vários procedimentos através de uma planilha Excel.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="add-mode-grid">
+
+          <button
+            type="button"
+            class="add-mode-card active"
+            id="btnModoManual"
+          >
+
+            <div class="add-mode-icon">
+              +
+            </div>
+
+            <div>
+
+              <strong>
+                Preencher manualmente
+              </strong>
+
+              <span>
+                Cadastre um procedimento por vez.
+              </span>
+
+            </div>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="add-mode-card"
+            id="btnModoPlanilha"
+          >
+
+            <div class="add-mode-icon">
+              XLS
+            </div>
+
+            <div>
+
+              <strong>
+                Importar planilha
+              </strong>
+
+              <span>
+                Cadastre vários procedimentos de uma só vez.
+              </span>
+
+            </div>
+
+          </button>
+
+        </div>
+
+
+        <div
+          class="add-panel"
+          id="painelManual"
+        >
+
+          <div class="add-panel-header">
+
+            <div>
+
+              <h3>
+                Cadastro manual
+              </h3>
+
+              <p>
+                Preencha as informações do procedimento.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <form id="formCadastroManual">
+
+            <div class="form-group">
+
+              <label for="descricaoProjeto">
+                Descrição do projeto
+              </label>
+
+              <textarea
+                id="descricaoProjeto"
+                rows="4"
+                placeholder="Ex.: Projeto de implantação e adequação dos sistemas elétricos do Data Center"
+              ></textarea>
+
+              <small class="field-help">
+                Este campo não é obrigatório.
+              </small>
+
+            </div>
+
+
+            <div class="form-grid">
+
+              <div class="form-group">
+
+                <label for="titulo">
+                  Título do procedimento *
+                </label>
+
+                <input
+                  type="text"
+                  id="titulo"
+                  placeholder="Ex.: Manutenção preventiva do transformador"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="cliente">
+                  Cliente *
+                </label>
+
+                <input
+                  type="text"
+                  id="cliente"
+                  placeholder="Ex.: SCALA"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="site">
+                  Site *
+                </label>
+
+                <input
+                  type="text"
+                  id="site"
+                  placeholder="Ex.: SSCLLP01"
+                  required
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="tipoProcedimento">
+                  Tipo de procedimento *
+                </label>
+
+                <select
+                  id="tipoProcedimento"
+                  required
+                >
+
+                  <option value="">
+                    Selecione
+                  </option>
+
+                  <option value="MOP">
+                    MOP
+                  </option>
+
+                  <option value="SOP">
+                    SOP
+                  </option>
+
+                  <option value="EOP">
+                    EOP
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="tipoDocumento">
+                  Documento *
+                </label>
+
+                <select
+                  id="tipoDocumento"
+                  required
+                >
+
+                  <option value="">
+                    Selecione
+                  </option>
+
+                  <option value="Principal">
+                    Principal
+                  </option>
+
+                  <option value="Replica">
+                    Réplica
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="numeroRelease">
+                  Número de Release
+                </label>
+
+                <input
+                  type="text"
+                  id="numeroRelease"
+                  placeholder="Pode ser preenchido depois"
+                >
+
+                <small class="field-help">
+                  Este campo não é obrigatório.
+                </small>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="etapa">
+                  Etapa *
+                </label>
+
+                <select
+                  id="etapa"
+                  required
+                >
+
+                  <option value="Em elaboração">
+                    Em elaboração
+                  </option>
+
+                  <option value="Dryrun">
+                    Dryrun
+                  </option>
+
+                  <option value="Revisão da qualidade">
+                    Revisão da qualidade
+                  </option>
+
+                  <option value="Análise de risco">
+                    Análise de risco
+                  </option>
+
+                  <option value="Validação interna">
+                    Validação interna
+                  </option>
+
+                  <option value="Enviado ao cliente">
+                    Enviado ao cliente
+                  </option>
+
+                  <option value="Completo">
+                    Completo
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="form-message"
+              id="mensagemCadastro"
+            ></div>
+
+
+            <div class="form-actions">
+
+              <button
+                type="reset"
+                class="btn-cancel"
+              >
+                Limpar
+              </button>
+
+              <button
+                type="submit"
+                class="btn-primary button-element"
+                id="btnSalvarProcedimento"
+              >
+                Salvar procedimento
+              </button>
+
+            </div>
+
+          </form>
+
+        </div>
+
+
+        <div
+          class="add-panel hidden"
+          id="painelPlanilha"
+        >
+
+          <div class="add-panel-header">
+
+            <div>
+
+              <h3>
+                Importar planilha Excel
+              </h3>
+
+              <p>
+                Cada linha da planilha será cadastrada como um procedimento.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="spreadsheet-example">
+
+            <div class="spreadsheet-example-header">
+
+              <div>
+
+                <strong>
+                  Estrutura da planilha
+                </strong>
+
+                <p>
+                  A primeira linha deverá conter os nomes das colunas abaixo.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="spreadsheet-table-wrapper">
+
+              <table class="spreadsheet-table">
+
+                <thead>
+
+                  <tr>
+                    <th>Descrição do projeto</th>
+                    <th>Titulo</th>
+                    <th>Cliente</th>
+                    <th>Site</th>
+                    <th>Tipo de procedimento</th>
+                    <th>Documento</th>
+                    <th>Numero de release</th>
+                    <th>Etapa</th>
+                  </tr>
+
+                </thead>
+
+                <tbody>
+
+                  <tr>
+                    <td>Projeto de adequação do sistema de refrigeração</td>
+                    <td>Manutenção preventiva</td>
+                    <td>SCALA</td>
+                    <td>SSCLLP01</td>
+                    <td>MOP</td>
+                    <td>Principal</td>
+                    <td>R01</td>
+                    <td>Em elaboração</td>
+                  </tr>
+
+                  <tr>
+                    <td>Projeto de operação dos equipamentos críticos</td>
+                    <td>Operação do equipamento</td>
+                    <td>SCALA</td>
+                    <td>SSCLLP01</td>
+                    <td>SOP</td>
+                    <td>Replica</td>
+                    <td></td>
+                    <td>Dryrun</td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+
+          <div class="import-rules">
+
+            <strong>
+              Regras da importação
+            </strong>
+
+            <ul>
+
+              <li>
+                A linha 1 deve conter os nomes das colunas.
+              </li>
+
+              <li>
+                Os dados começam na linha 2.
+              </li>
+
+              <li>
+                Título, Cliente e Site são obrigatórios.
+              </li>
+
+              <li>
+                Cada linha representa um procedimento.
+              </li>
+
+              <li>
+                O número de release pode ficar vazio.
+              </li>
+
+              <li>
+                Tipo deve ser MOP, SOP ou EOP.
+              </li>
+
+              <li>
+                Documento deve ser Principal ou Replica.
+              </li>
+
+            </ul>
+
+          </div>
+
+
+          <form
+            id="formImportacao"
+            enctype="multipart/form-data"
+          >
+
+            <div
+              class="upload-area"
+              id="uploadArea"
+            >
+
+              <input
+                type="file"
+                id="arquivoPlanilha"
+                name="planilha"
+                accept=".xlsx,.xls,.xlsm"
+                hidden
+              >
+
+
+              <div class="upload-icon">
+                XLS
+              </div>
+
+
+              <strong>
+                Selecione a planilha
+              </strong>
+
+
+              <span>
+                Arquivos .xlsx, .xls ou .xlsm
+              </span>
+
+
+              <button
+                type="button"
+                class="btn-select-file"
+                id="btnSelecionarPlanilha"
+              >
+                Escolher arquivo
+              </button>
+
+
+              <div
+                class="selected-file"
+                id="arquivoSelecionado"
+              >
+                Nenhum arquivo selecionado
+              </div>
+
+            </div>
+
+
+            <div
+              class="form-message"
+              id="mensagemImportacao"
+            ></div>
+
+
+            <div class="form-actions">
+
+              <button
+                type="button"
+                class="btn-cancel"
+                id="btnLimparPlanilha"
+              >
+                Limpar
+              </button>
+
+              <button
+                type="submit"
+                class="btn-primary button-element"
+                id="btnImportarPlanilha"
+              >
+                Importar procedimentos
+              </button>
+
+            </div>
+
+          </form>
+
+
+          <div
+            class="import-result hidden"
+            id="resultadoImportacao"
+          >
+
+            <h4>
+              Resultado da importação
+            </h4>
+
+
+            <div class="import-result-grid">
+
+              <div>
+                <span>Linhas encontradas</span>
+                <strong id="resultadoTotal">0</strong>
+              </div>
+
+              <div>
+                <span>Importadas</span>
+                <strong
+                  class="result-success"
+                  id="resultadoValidas"
+                >
+                  0
+                </strong>
+              </div>
+
+              <div>
+                <span>Com erro</span>
+                <strong
+                  class="result-error"
+                  id="resultadoInvalidas"
+                >
+                  0
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div id="listaErrosImportacao"></div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <script src="adicionar.js"></script>
+
+</body>
+
+</html>
