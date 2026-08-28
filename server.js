@@ -1116,6 +1116,520 @@ app.post(
   }
 );
 
+/* =========================================================
+   EDITAR PROCEDIMENTOS EM LOTE
+========================================================= */
+
+app.put(
+  "/api/procedimentos/lote",
+  async (req, res) => {
+
+    if (!verificarSupabase(res)) {
+      return;
+    }
+
+
+    try {
+
+      const {
+        ids,
+        alteracoes
+      } = req.body;
+
+
+      /* =====================================================
+         VALIDAR IDS
+      ===================================================== */
+
+      if (
+        !Array.isArray(ids) ||
+        ids.length === 0
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            erro:
+              "Nenhum procedimento foi selecionado."
+          });
+
+      }
+
+
+      /* =====================================================
+         VALIDAR ALTERAÇÕES
+      ===================================================== */
+
+      if (
+        !alteracoes ||
+        typeof alteracoes !== "object" ||
+        Array.isArray(alteracoes)
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            erro:
+              "Nenhuma alteração foi informada."
+          });
+
+      }
+
+
+      /*
+        O título nunca pode ser alterado
+        durante uma edição em lote.
+      */
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          alteracoes,
+          "titulo"
+        )
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            erro:
+              "O título não pode ser alterado em lote."
+          });
+
+      }
+
+
+      /* =====================================================
+         CAMPOS PERMITIDOS
+      ===================================================== */
+
+      const camposPermitidos = [
+        "descricao_projeto",
+        "cliente",
+        "site",
+        "tipo_procedimento",
+        "tipo_documento",
+        "numero_release",
+        "etapa"
+      ];
+
+
+      const dadosAtualizacao = {};
+
+
+      /* =====================================================
+         DESCRIÇÃO DO PROJETO
+      ===================================================== */
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          alteracoes,
+          "descricao_projeto"
+        )
+      ) {
+
+        dadosAtualizacao.descricao_projeto =
+          texto(
+            alteracoes.descricao_projeto
+          ) || null;
+
+      }
+
+
+      /* =====================================================
+         CLIENTE
+      ===================================================== */
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          alteracoes,
+          "cliente"
+        )
+      ) {
+
+        const cliente =
+          texto(
+            alteracoes.cliente
+          );
+
+
+        if (!cliente) {
+
+          return res
+            .status(400)
+            .json({
+              erro:
+                "Cliente não pode ficar vazio."
+            });
+
+        }
+
+
+        dadosAtualizacao.cliente =
+          cliente;
+
+      }
+
+
+      /* =====================================================
+         SITE
+      ===================================================== */
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          alteracoes,
+          "site"
+        )
+      ) {
+
+        const site =
+          texto(
+            alteracoes.site
+          );
+
+
+        if (!site) {
+
+          return res
+            .status(400)
+            .json({
+              erro:
+                "Site não pode ficar vazio."
+            });
+
+        }
+
+
+        dadosAtualizacao.site =
+          site;
+
+      }
+
+
+      /* =====================================================
+         TIPO DE PROCEDIMENTO
+      ===================================================== */
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          alteracoes,
+          "tipo_procedimento"
+        )
+      ) {
+
+        const tipo =
+          normalizarTipo(
+            alteracoes.tipo_procedimento
+          );
+
+
+        if (
+          !TIPOS_VALIDOS.includes(
+            tipo
+          )
+        ) {
+
+          return res
+            .status(400)
+            .json({
+              erro:
+                "Tipo de procedimento inválido."
+            });
+
+        }
+
+
+        dadosAtualizacao.tipo_procedimento =
+          tipo;
+
+      }
+
+
+      /* =====================================================
+         TIPO DE DOCUMENTO
+      ===================================================== */
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          alteracoes,
+          "tipo_documento"
+        )
+      ) {
+
+        const documento =
+          normalizarDocumento(
+            alteracoes.tipo_documento
+          );
+
+
+        if (
+          !DOCUMENTOS_VALIDOS.includes(
+            documento
+          )
+        ) {
+
+          return res
+            .status(400)
+            .json({
+              erro:
+                "Documento inválido."
+            });
+
+        }
+
+
+        dadosAtualizacao.tipo_documento =
+          documento;
+
+      }
+
+
+      /* =====================================================
+         NÚMERO DE RELEASE
+      ===================================================== */
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          alteracoes,
+          "numero_release"
+        )
+      ) {
+
+        dadosAtualizacao.numero_release =
+          texto(
+            alteracoes.numero_release
+          ) || null;
+
+      }
+
+
+      /* =====================================================
+         ETAPA
+      ===================================================== */
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          alteracoes,
+          "etapa"
+        )
+      ) {
+
+        const etapa =
+          normalizarEtapa(
+            alteracoes.etapa
+          );
+
+
+        if (
+          !ETAPAS_VALIDAS.includes(
+            etapa
+          )
+        ) {
+
+          return res
+            .status(400)
+            .json({
+              erro:
+                "Etapa inválida."
+            });
+
+        }
+
+
+        dadosAtualizacao.etapa =
+          etapa;
+
+      }
+
+
+      /* =====================================================
+         GARANTIR QUE NÃO EXISTAM CAMPOS NÃO PERMITIDOS
+      ===================================================== */
+
+      const camposRecebidos =
+        Object.keys(
+          alteracoes
+        );
+
+
+      const camposInvalidos =
+        camposRecebidos.filter(
+          campo =>
+            !camposPermitidos.includes(
+              campo
+            )
+        );
+
+
+      if (
+        camposInvalidos.length > 0
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            erro:
+              "Existem campos não permitidos na edição em lote.",
+            campos:
+              camposInvalidos
+          });
+
+      }
+
+
+      if (
+        Object.keys(
+          dadosAtualizacao
+        ).length === 0
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            erro:
+              "Nenhum campo foi selecionado para alteração."
+          });
+
+      }
+
+
+      /* =====================================================
+         ATUALIZAÇÃO
+      ===================================================== */
+
+      dadosAtualizacao.atualizado_em =
+        new Date().toISOString();
+
+
+      /*
+        Trabalhamos em lotes menores para evitar
+        problemas quando muitos procedimentos
+        forem selecionados.
+      */
+
+      const tamanhoLote =
+        100;
+
+
+      let totalAtualizados =
+        0;
+
+
+      for (
+        let inicio = 0;
+        inicio < ids.length;
+        inicio += tamanhoLote
+      ) {
+
+        const loteIds =
+          ids
+            .slice(
+              inicio,
+              inicio + tamanhoLote
+            )
+            .map(
+              id =>
+                texto(id)
+            )
+            .filter(
+              Boolean
+            );
+
+
+        if (
+          loteIds.length === 0
+        ) {
+
+          continue;
+
+        }
+
+
+        const {
+          data,
+          error
+        } =
+          await supabase
+            .from("procedimentos")
+            .update(
+              dadosAtualizacao
+            )
+            .in(
+              "id",
+              loteIds
+            )
+            .select(
+              "id"
+            );
+
+
+        if (error) {
+
+          console.error(
+            "Erro na edição em lote:",
+            error
+          );
+
+
+          return res
+            .status(500)
+            .json({
+              erro:
+                "Erro ao atualizar procedimentos em lote.",
+              detalhe:
+                error.message,
+              atualizados:
+                totalAtualizados
+            });
+
+        }
+
+
+        totalAtualizados +=
+          data?.length || 0;
+
+      }
+
+
+      /* =====================================================
+         RESPOSTA
+      ===================================================== */
+
+      return res.json({
+
+        sucesso:
+          true,
+
+        selecionados:
+          ids.length,
+
+        atualizados:
+          totalAtualizados
+
+      });
+
+
+    } catch (erro) {
+
+      console.error(
+        "Erro interno na edição em lote:",
+        erro
+      );
+
+
+      return res
+        .status(500)
+        .json({
+          erro:
+            "Erro interno ao atualizar procedimentos em lote.",
+          detalhe:
+            erro.message
+        });
+
+    }
+
+  }
+);
+
 
 /* =========================================================
    EDITAR PROCEDIMENTO

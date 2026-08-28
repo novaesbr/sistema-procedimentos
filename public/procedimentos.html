@@ -68,7 +68,9 @@
 
         <span>Sistema de Controle</span>
 
-        <small>MOP • SOP • EOP</small>
+        <small>
+          MOP • SOP • EOP
+        </small>
 
       </div>
 
@@ -273,11 +275,34 @@
 
           <div class="table-info">
 
-            Total encontrado:
+            <div>
 
-            <strong id="totalEncontrado">
-              0
-            </strong>
+              Total encontrado:
+
+              <strong id="totalEncontrado">
+                0
+              </strong>
+
+            </div>
+
+
+            <div class="bulk-actions">
+
+              <span id="totalSelecionados">
+                0 selecionados
+              </span>
+
+
+              <button
+                type="button"
+                id="btnEditarSelecionados"
+                class="btn-bulk-edit"
+                disabled
+              >
+                Editar selecionados
+              </button>
+
+            </div>
 
           </div>
 
@@ -289,6 +314,17 @@
               <thead>
 
                 <tr>
+
+                  <th class="selection-column">
+
+                    <input
+                      type="checkbox"
+                      id="selecionarTodosProcedimentos"
+                      title="Selecionar todos os procedimentos exibidos"
+                    >
+
+                  </th>
+
 
                   <th>
                     Descrição do projeto
@@ -336,7 +372,7 @@
                 <tr>
 
                   <td
-                    colspan="9"
+                    colspan="10"
                     class="empty-table"
                   >
                     Nenhum procedimento carregado.
@@ -360,7 +396,7 @@
 
 
   <!-- =====================================================
-       MODAL DE EDIÇÃO
+       MODAL DE EDIÇÃO INDIVIDUAL
   ====================================================== -->
 
   <div
@@ -617,6 +653,345 @@
             class="btn-primary button-element"
           >
             Salvar alterações
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MODAL DE EDIÇÃO EM LOTE
+  ====================================================== -->
+
+  <div
+    class="modal-overlay"
+    id="modalEdicaoLote"
+  >
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+
+          <h3>
+            Editar procedimentos selecionados
+          </h3>
+
+          <p>
+            Somente os campos preenchidos abaixo serão alterados.
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="modal-close"
+          id="btnFecharEdicaoLote"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="formEdicaoLote">
+
+        <div class="bulk-edit-summary">
+
+          <strong id="quantidadeEdicaoLote">
+            0 procedimentos selecionados
+          </strong>
+
+          <span>
+            O título de cada procedimento será preservado.
+          </span>
+
+        </div>
+
+
+        <div class="form-grid">
+
+          <!-- DESCRIÇÃO -->
+
+          <div class="form-group">
+
+            <label for="editarLoteDescricaoProjeto">
+              Descrição do projeto
+            </label>
+
+            <select id="acaoLoteDescricaoProjeto">
+
+              <option value="manter">
+                Não alterar
+              </option>
+
+              <option value="alterar">
+                Alterar
+              </option>
+
+              <option value="limpar">
+                Limpar campo
+              </option>
+
+            </select>
+
+
+            <textarea
+              id="editarLoteDescricaoProjeto"
+              rows="3"
+              placeholder="Nova descrição do projeto"
+              disabled
+            ></textarea>
+
+          </div>
+
+
+          <!-- CLIENTE -->
+
+          <div class="form-group">
+
+            <label for="editarLoteCliente">
+              Cliente
+            </label>
+
+            <select id="acaoLoteCliente">
+
+              <option value="manter">
+                Não alterar
+              </option>
+
+              <option value="alterar">
+                Alterar
+              </option>
+
+            </select>
+
+
+            <input
+              type="text"
+              id="editarLoteCliente"
+              placeholder="Novo cliente"
+              disabled
+            >
+
+          </div>
+
+
+          <!-- SITE -->
+
+          <div class="form-group">
+
+            <label for="editarLoteSite">
+              Site
+            </label>
+
+            <select id="acaoLoteSite">
+
+              <option value="manter">
+                Não alterar
+              </option>
+
+              <option value="alterar">
+                Alterar
+              </option>
+
+            </select>
+
+
+            <input
+              type="text"
+              id="editarLoteSite"
+              placeholder="Novo site"
+              disabled
+            >
+
+          </div>
+
+
+          <!-- TIPO -->
+
+          <div class="form-group">
+
+            <label for="editarLoteTipo">
+              Tipo de procedimento
+            </label>
+
+            <select id="editarLoteTipo">
+
+              <option value="">
+                Não alterar
+              </option>
+
+              <option value="MOP">
+                MOP
+              </option>
+
+              <option value="SOP">
+                SOP
+              </option>
+
+              <option value="EOP">
+                EOP
+              </option>
+
+              <option value="Corretiva">
+                Corretiva
+              </option>
+
+              <option value="Instalação">
+                Instalação
+              </option>
+
+              <option value="Retrofit">
+                Retrofit
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- DOCUMENTO -->
+
+          <div class="form-group">
+
+            <label for="editarLoteDocumento">
+              Documento
+            </label>
+
+            <select id="editarLoteDocumento">
+
+              <option value="">
+                Não alterar
+              </option>
+
+              <option value="Principal">
+                Principal
+              </option>
+
+              <option value="Replica">
+                Réplica
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- RELEASE -->
+
+          <div class="form-group">
+
+            <label for="editarLoteRelease">
+              Número de Release
+            </label>
+
+            <select id="acaoLoteRelease">
+
+              <option value="manter">
+                Não alterar
+              </option>
+
+              <option value="alterar">
+                Alterar
+              </option>
+
+              <option value="limpar">
+                Limpar campo
+              </option>
+
+            </select>
+
+
+            <input
+              type="text"
+              id="editarLoteRelease"
+              placeholder="Novo número de Release"
+              disabled
+            >
+
+          </div>
+
+
+          <!-- ETAPA -->
+
+          <div class="form-group">
+
+            <label for="editarLoteEtapa">
+              Etapa
+            </label>
+
+            <select id="editarLoteEtapa">
+
+              <option value="">
+                Não alterar
+              </option>
+
+              <option value="Em elaboração">
+                Em elaboração
+              </option>
+
+              <option value="Dryrun">
+                Dryrun
+              </option>
+
+              <option value="Revisão da qualidade">
+                Revisão da qualidade
+              </option>
+
+              <option value="Análise de risco">
+                Análise de risco
+              </option>
+
+              <option value="Validação interna">
+                Validação interna
+              </option>
+
+              <option value="Enviado ao cliente">
+                Enviado ao cliente
+              </option>
+
+              <option value="Completo">
+                Completo
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="form-message"
+          id="mensagemEdicaoLote"
+        ></div>
+
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn-cancel"
+            id="btnCancelarEdicaoLote"
+          >
+            Cancelar
+          </button>
+
+
+          <button
+            type="submit"
+            class="btn-primary button-element"
+            id="btnSalvarEdicaoLote"
+          >
+            Aplicar alterações
           </button>
 
         </div>

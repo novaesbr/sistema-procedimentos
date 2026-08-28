@@ -2222,3 +2222,293 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
+
+  /* =========================================================
+   EDIÇÃO EM LOTE DE PROCEDIMENTOS
+========================================================= */
+
+
+/* =========================================================
+   COLUNA DE SELEÇÃO
+========================================================= */
+
+.procedures-table th.selection-column,
+.procedures-table td.selection-cell {
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+
+  padding-left: 14px;
+  padding-right: 10px;
+
+  text-align: center;
+}
+
+
+/*
+  Corrige a regra antiga que fazia a primeira coluna
+  da tabela ter largura de 220px.
+*/
+
+.procedures-table th.selection-column:first-child,
+.procedures-table td.selection-cell:first-child {
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+}
+
+
+/* =========================================================
+   CHECKBOXES
+========================================================= */
+
+#selecionarTodosProcedimentos,
+.procedure-checkbox {
+  width: 17px;
+  height: 17px;
+
+  margin: 0;
+
+  cursor: pointer;
+
+  accent-color: var(--blue);
+}
+
+
+.procedure-checkbox {
+  vertical-align: middle;
+}
+
+
+/* =========================================================
+   INFORMAÇÕES / AÇÕES DA SELEÇÃO
+========================================================= */
+
+.table-info {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  min-height: 52px;
+}
+
+
+.bulk-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+#totalSelecionados {
+  color: var(--text-secondary);
+
+  font-size: 12px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   BOTÃO EDITAR SELECIONADOS
+========================================================= */
+
+.btn-bulk-edit {
+  min-height: 36px;
+
+  padding: 8px 14px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: var(--blue);
+
+  color: white;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.1s ease;
+}
+
+
+.btn-bulk-edit:hover:not(:disabled) {
+  background: #24479d;
+}
+
+
+.btn-bulk-edit:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+
+.btn-bulk-edit:disabled {
+  background: #cbd5e1;
+
+  color: #64748b;
+
+  cursor: not-allowed;
+
+  opacity: 0.75;
+}
+
+
+/* =========================================================
+   RESUMO DO MODAL DE EDIÇÃO EM LOTE
+========================================================= */
+
+.bulk-edit-summary {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  margin-bottom: 18px;
+
+  padding: 14px 16px;
+
+  background: #f8fafc;
+
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--blue);
+
+  border-radius: 9px;
+}
+
+
+.bulk-edit-summary strong {
+  color: var(--navy);
+
+  font-size: 13px;
+}
+
+
+.bulk-edit-summary span {
+  color: var(--text-secondary);
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   CAMPOS DESABILITADOS DO MODAL
+========================================================= */
+
+#modalEdicaoLote .form-group input:disabled,
+#modalEdicaoLote .form-group textarea:disabled {
+  background: #f1f5f9;
+
+  color: #94a3b8;
+
+  cursor: not-allowed;
+
+  opacity: 0.8;
+}
+
+
+/* =========================================================
+   TEXTAREA DO MODAL EM LOTE
+========================================================= */
+
+#modalEdicaoLote textarea {
+  width: 100%;
+
+  min-height: 90px;
+
+  padding: 11px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  background: white;
+
+  color: var(--text);
+
+  font: inherit;
+
+  outline: none;
+
+  resize: vertical;
+}
+
+
+#modalEdicaoLote textarea:focus {
+  border-color: var(--blue);
+}
+
+
+/* =========================================================
+   MODAL DE EDIÇÃO EM LOTE
+========================================================= */
+
+#modalEdicaoLote .modal {
+  max-width: 780px;
+}
+
+
+/* =========================================================
+   LINHA SELECIONADA
+========================================================= */
+
+.procedures-table tbody tr:has(.procedure-checkbox:checked) {
+  background: #f4f7ff;
+}
+
+
+.procedures-table tbody tr:has(.procedure-checkbox:checked):hover {
+  background: #eef3ff;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .table-info {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+
+  .bulk-actions {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+
+  .btn-bulk-edit {
+    min-height: 38px;
+  }
+
+}
+
+
+@media (max-width: 450px) {
+
+  .bulk-actions {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .btn-bulk-edit {
+    width: 100%;
+  }
+
+}

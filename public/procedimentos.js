@@ -2,6 +2,8 @@ let procedimentosAtuais = [];
 
 let idParaExcluir = null;
 
+let idsSelecionados = new Set();
+
 
 document.addEventListener(
   "DOMContentLoaded",
@@ -176,6 +178,36 @@ function configurarEventos() {
 
       }
     );
+
+
+  document.getElementById("selecionarTodosProcedimentos")
+    ?.addEventListener("change", evento => {
+      selecionarTodos(evento.target.checked);
+    });
+
+  document.getElementById("btnEditarSelecionados")
+    ?.addEventListener("click", abrirEdicaoLote);
+
+  document.getElementById("btnFecharEdicaoLote")
+    ?.addEventListener("click", fecharModalEdicaoLote);
+
+  document.getElementById("btnCancelarEdicaoLote")
+    ?.addEventListener("click", fecharModalEdicaoLote);
+
+  document.getElementById("formEdicaoLote")
+    ?.addEventListener("submit", salvarEdicaoLote);
+
+  document.getElementById("modalEdicaoLote")
+    ?.addEventListener("click", evento => {
+      if (evento.target.id === "modalEdicaoLote") {
+        fecharModalEdicaoLote();
+      }
+    });
+
+  configurarCampoLote("acaoLoteDescricaoProjeto", "editarLoteDescricaoProjeto");
+  configurarCampoLote("acaoLoteCliente", "editarLoteCliente");
+  configurarCampoLote("acaoLoteSite", "editarLoteSite");
+  configurarCampoLote("acaoLoteRelease", "editarLoteRelease");
 
 }
 
@@ -424,6 +456,8 @@ function preencherDescricoesProjeto(
 
 async function carregarProcedimentos() {
 
+  limparSelecao();
+
   const tabela =
     document.getElementById(
       "tabelaProcedimentos"
@@ -440,7 +474,7 @@ async function carregarProcedimentos() {
     <tr>
 
       <td
-        colspan="9"
+        colspan="10"
         class="empty-table"
       >
         Carregando procedimentos...
@@ -604,7 +638,7 @@ async function carregarProcedimentos() {
       <tr>
 
         <td
-          colspan="9"
+          colspan="10"
           class="empty-table"
         >
           Não foi possível carregar os procedimentos.
@@ -651,7 +685,7 @@ function renderizarTabela() {
       <tr>
 
         <td
-          colspan="9"
+          colspan="10"
           class="empty-table"
         >
           Nenhum procedimento encontrado.
@@ -680,6 +714,18 @@ function renderizarTabela() {
 
 
       linha.innerHTML = `
+
+        <td class="selection-cell">
+
+          <input
+            type="checkbox"
+            class="procedure-checkbox"
+            data-id="${escaparHtml(procedimento.id)}"
+            onchange="alternarSelecaoProcedimento(this)"
+          >
+
+        </td>
+
 
         <td>
 
@@ -822,6 +868,349 @@ function renderizarTabela() {
     }
   );
 
+}
+
+
+
+/* =========================================================
+   SELEÇÃO E EDIÇÃO EM LOTE
+========================================================= */
+
+function alternarSelecaoProcedimento(checkbox) {
+  const id = String(checkbox.dataset.id || "");
+  if (!id) return;
+
+  if (checkbox.checked) {
+    idsSelecionados.add(id);
+  } else {
+    idsSelecionados.delete(id);
+  }
+
+  atualizarEstadoSelecao();
+}
+
+
+function selecionarTodos(selecionar) {
+  document.querySelectorAll(".procedure-checkbox").forEach(checkbox => {
+    checkbox.checked = selecionar;
+
+    const id = String(checkbox.dataset.id || "");
+    if (!id) return;
+
+    if (selecionar) {
+      idsSelecionados.add(id);
+    } else {
+      idsSelecionados.delete(id);
+    }
+  });
+
+  atualizarEstadoSelecao();
+}
+
+
+function limparSelecao() {
+  idsSelecionados.clear();
+
+  const checkboxTodos =
+    document.getElementById("selecionarTodosProcedimentos");
+
+  if (checkboxTodos) {
+    checkboxTodos.checked = false;
+    checkboxTodos.indeterminate = false;
+  }
+
+  atualizarEstadoSelecao();
+}
+
+
+function atualizarEstadoSelecao() {
+  const quantidade = idsSelecionados.size;
+  const total = procedimentosAtuais.length;
+
+  const texto = document.getElementById("totalSelecionados");
+  if (texto) {
+    texto.textContent =
+      `${quantidade} ${quantidade === 1 ? "selecionado" : "selecionados"}`;
+  }
+
+  const botao = document.getElementById("btnEditarSelecionados");
+  if (botao) {
+    botao.disabled = quantidade === 0;
+  }
+
+  const checkboxTodos =
+    document.getElementById("selecionarTodosProcedimentos");
+
+  if (checkboxTodos) {
+    checkboxTodos.checked = total > 0 && quantidade === total;
+    checkboxTodos.indeterminate = quantidade > 0 && quantidade < total;
+  }
+}
+
+
+function configurarCampoLote(idAcao, idCampo) {
+  const acao = document.getElementById(idAcao);
+  const campo = document.getElementById(idCampo);
+
+  if (!acao || !campo) return;
+
+  const atualizar = () => {
+    campo.disabled = acao.value !== "alterar";
+
+    if (acao.value !== "alterar") {
+      campo.value = "";
+    }
+  };
+
+  acao.addEventListener("change", atualizar);
+  atualizar();
+}
+
+
+function abrirEdicaoLote() {
+  if (idsSelecionados.size === 0) return;
+
+  resetarFormularioEdicaoLote();
+
+  const quantidade = idsSelecionados.size;
+  const resumo = document.getElementById("quantidadeEdicaoLote");
+
+  if (resumo) {
+    resumo.textContent =
+      `${quantidade} ${quantidade === 1
+        ? "procedimento selecionado"
+        : "procedimentos selecionados"}`;
+  }
+
+  document.getElementById("modalEdicaoLote")
+    ?.classList.add("show");
+
+  document.body.classList.add("modal-open");
+}
+
+
+function fecharModalEdicaoLote() {
+  document.getElementById("modalEdicaoLote")
+    ?.classList.remove("show");
+
+  document.body.classList.remove("modal-open");
+  limparMensagemEdicaoLote();
+}
+
+
+function resetarFormularioEdicaoLote() {
+  document.getElementById("formEdicaoLote")?.reset();
+
+  [
+    "editarLoteDescricaoProjeto",
+    "editarLoteCliente",
+    "editarLoteSite",
+    "editarLoteRelease"
+  ].forEach(id => {
+    const campo = document.getElementById(id);
+    if (campo) campo.disabled = true;
+  });
+
+  limparMensagemEdicaoLote();
+}
+
+
+function montarAlteracoesLote() {
+  const alteracoes = {};
+
+  const acaoDescricao =
+    document.getElementById("acaoLoteDescricaoProjeto")?.value;
+
+  if (acaoDescricao === "alterar") {
+    alteracoes.descricao_projeto =
+      document.getElementById("editarLoteDescricaoProjeto")?.value.trim() || "";
+  } else if (acaoDescricao === "limpar") {
+    alteracoes.descricao_projeto = null;
+  }
+
+  const acaoCliente =
+    document.getElementById("acaoLoteCliente")?.value;
+
+  if (acaoCliente === "alterar") {
+    alteracoes.cliente =
+      document.getElementById("editarLoteCliente")?.value.trim() || "";
+  }
+
+  const acaoSite =
+    document.getElementById("acaoLoteSite")?.value;
+
+  if (acaoSite === "alterar") {
+    alteracoes.site =
+      document.getElementById("editarLoteSite")?.value.trim() || "";
+  }
+
+  const tipo =
+    document.getElementById("editarLoteTipo")?.value;
+
+  if (tipo) {
+    alteracoes.tipo_procedimento = tipo;
+  }
+
+  const documento =
+    document.getElementById("editarLoteDocumento")?.value;
+
+  if (documento) {
+    alteracoes.tipo_documento = documento;
+  }
+
+  const acaoRelease =
+    document.getElementById("acaoLoteRelease")?.value;
+
+  if (acaoRelease === "alterar") {
+    alteracoes.numero_release =
+      document.getElementById("editarLoteRelease")?.value.trim() || "";
+  } else if (acaoRelease === "limpar") {
+    alteracoes.numero_release = null;
+  }
+
+  const etapa =
+    document.getElementById("editarLoteEtapa")?.value;
+
+  if (etapa) {
+    alteracoes.etapa = etapa;
+  }
+
+  return alteracoes;
+}
+
+
+async function salvarEdicaoLote(evento) {
+  evento.preventDefault();
+
+  const ids = Array.from(idsSelecionados);
+  const alteracoes = montarAlteracoesLote();
+
+  if (ids.length === 0) {
+    mostrarMensagemEdicaoLote(
+      "Nenhum procedimento selecionado.",
+      "error"
+    );
+    return;
+  }
+
+  if (Object.keys(alteracoes).length === 0) {
+    mostrarMensagemEdicaoLote(
+      "Escolha pelo menos um campo para alterar.",
+      "error"
+    );
+    return;
+  }
+
+  if (
+    Object.prototype.hasOwnProperty.call(alteracoes, "cliente") &&
+    !alteracoes.cliente
+  ) {
+    mostrarMensagemEdicaoLote("Informe o novo Cliente.", "error");
+    return;
+  }
+
+  if (
+    Object.prototype.hasOwnProperty.call(alteracoes, "site") &&
+    !alteracoes.site
+  ) {
+    mostrarMensagemEdicaoLote("Informe o novo Site.", "error");
+    return;
+  }
+
+  const quantidade = ids.length;
+
+  const confirmado = window.confirm(
+    `${quantidade} ${quantidade === 1
+      ? "procedimento será atualizado"
+      : "procedimentos serão atualizados"}. Deseja continuar?`
+  );
+
+  if (!confirmado) return;
+
+  const botao = document.getElementById("btnSalvarEdicaoLote");
+
+  if (botao) {
+    botao.disabled = true;
+    botao.textContent = "Aplicando alterações...";
+  }
+
+  mostrarMensagemEdicaoLote(
+    "Atualizando procedimentos...",
+    "info"
+  );
+
+  try {
+    const resposta = await fetch(
+      "/api/procedimentos/lote",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          ids,
+          alteracoes
+        })
+      }
+    );
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(
+        resultado.erro ||
+        resultado.detalhe ||
+        "Erro ao atualizar procedimentos."
+      );
+    }
+
+    mostrarMensagemEdicaoLote(
+      `${resultado.atualizados || quantidade} procedimentos atualizados com sucesso.`,
+      "success"
+    );
+
+    await carregarFiltros();
+    await carregarProcedimentos();
+
+    setTimeout(
+      fecharModalEdicaoLote,
+      700
+    );
+
+  } catch (erro) {
+    mostrarMensagemEdicaoLote(
+      erro.message,
+      "error"
+    );
+
+  } finally {
+    if (botao) {
+      botao.disabled = false;
+      botao.textContent = "Aplicar alterações";
+    }
+  }
+}
+
+
+function mostrarMensagemEdicaoLote(texto, tipo) {
+  const mensagem =
+    document.getElementById("mensagemEdicaoLote");
+
+  if (!mensagem) return;
+
+  mensagem.textContent = texto;
+  mensagem.className = `form-message ${tipo}`;
+}
+
+
+function limparMensagemEdicaoLote() {
+  const mensagem =
+    document.getElementById("mensagemEdicaoLote");
+
+  if (!mensagem) return;
+
+  mensagem.textContent = "";
+  mensagem.className = "form-message";
 }
 
 
