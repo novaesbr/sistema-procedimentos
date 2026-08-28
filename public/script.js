@@ -102,6 +102,88 @@ function configurarEventos() {
 }
 
 
+/* =========================================================
+   PREENCHER FILTRO DE DESCRIÇÃO
+========================================================= */
+
+function preencherFiltroDescricao(
+  select,
+  dados
+) {
+
+  if (!select) {
+    return;
+  }
+
+
+  select.innerHTML =
+    `<option value="Todas">Todas</option>`;
+
+
+  const descricoesProjetos =
+    Array.isArray(
+      dados.descricoes_projetos
+    )
+      ? dados.descricoes_projetos
+      : [];
+
+
+  const descricoesProjetosCompletas =
+    Array.isArray(
+      dados.descricoes_projetos_completas
+    )
+      ? dados.descricoes_projetos_completas
+      : [];
+
+
+  descricoesProjetos.forEach(
+    descricao => {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      /*
+        O valor utilizado pelo filtro continua
+        sendo somente a descrição original.
+      */
+
+      option.value =
+        descricao;
+
+
+      /*
+        O check é apenas visual.
+      */
+
+      const estaCompleta =
+        descricoesProjetosCompletas.includes(
+          descricao
+        );
+
+
+      option.textContent =
+        estaCompleta
+          ? `${descricao} ✓`
+          : descricao;
+
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   CARREGAR FILTROS
+========================================================= */
+
 async function carregarFiltros() {
 
   try {
@@ -126,6 +208,10 @@ async function carregarFiltros() {
     const dados =
       await resposta.json();
 
+
+    /* =====================================================
+       SITE
+    ===================================================== */
 
     const selectSite =
       document.getElementById(
@@ -155,11 +241,14 @@ async function carregarFiltros() {
               "option"
             );
 
+
           option.value =
             site;
 
+
           option.textContent =
             site;
+
 
           selectSite.appendChild(
             option
@@ -171,48 +260,20 @@ async function carregarFiltros() {
     }
 
 
+    /* =====================================================
+       DESCRIÇÃO DO PROJETO
+    ===================================================== */
+
     const selectDescricaoProjeto =
       document.getElementById(
         "filtroDescricaoProjeto"
       );
 
 
-    if (selectDescricaoProjeto) {
-
-      selectDescricaoProjeto.innerHTML =
-        `<option value="Todas">Todas</option>`;
-
-
-      const descricoesProjetos =
-        Array.isArray(
-          dados.descricoes_projetos
-        )
-          ? dados.descricoes_projetos
-          : [];
-
-
-      descricoesProjetos.forEach(
-        descricao => {
-
-          const option =
-            document.createElement(
-              "option"
-            );
-
-          option.value =
-            descricao;
-
-          option.textContent =
-            descricao;
-
-          selectDescricaoProjeto.appendChild(
-            option
-          );
-
-        }
-      );
-
-    }
+    preencherFiltroDescricao(
+      selectDescricaoProjeto,
+      dados
+    );
 
 
   } catch (erro) {
@@ -226,6 +287,10 @@ async function carregarFiltros() {
 
 }
 
+
+/* =========================================================
+   CARREGAR DESCRIÇÕES PELO SITE
+========================================================= */
 
 async function carregarDescricoesPorSite() {
 
@@ -275,37 +340,15 @@ async function carregarDescricoesPorSite() {
       await resposta.json();
 
 
-    selectDescricaoProjeto.innerHTML =
-      `<option value="Todas">Todas</option>`;
+    /*
+      Utilizamos a mesma função para garantir
+      que o check também apareça quando
+      o usuário trocar o Site.
+    */
 
-
-    const descricoesProjetos =
-      Array.isArray(
-        dados.descricoes_projetos
-      )
-        ? dados.descricoes_projetos
-        : [];
-
-
-    descricoesProjetos.forEach(
-      descricao => {
-
-        const option =
-          document.createElement(
-            "option"
-          );
-
-        option.value =
-          descricao;
-
-        option.textContent =
-          descricao;
-
-        selectDescricaoProjeto.appendChild(
-          option
-        );
-
-      }
+    preencherFiltroDescricao(
+      selectDescricaoProjeto,
+      dados
     );
 
 
@@ -320,6 +363,10 @@ async function carregarDescricoesPorSite() {
 
 }
 
+
+/* =========================================================
+   CARREGAR DASHBOARD
+========================================================= */
 
 async function carregarDashboard() {
 
@@ -410,6 +457,10 @@ async function carregarDashboard() {
 }
 
 
+/* =========================================================
+   CARDS
+========================================================= */
+
 function atualizarCards(
   dados
 ) {
@@ -443,6 +494,10 @@ function atualizarCards(
 
 }
 
+
+/* =========================================================
+   ETAPAS
+========================================================= */
 
 function atualizarEtapas(
   dados
@@ -503,6 +558,10 @@ function atualizarEtapas(
 
 }
 
+
+/* =========================================================
+   GRÁFICO POR TIPO
+========================================================= */
 
 function criarGraficoTipos(
   dados
@@ -671,6 +730,10 @@ function criarGraficoTipos(
 }
 
 
+/* =========================================================
+   GRÁFICO POR ETAPA
+========================================================= */
+
 function criarGraficoEtapas(
   dados
 ) {
@@ -814,6 +877,10 @@ function criarGraficoEtapas(
 }
 
 
+/* =========================================================
+   LEGENDA DOS GRÁFICOS
+========================================================= */
+
 function criarLegenda(
   elementoId,
   labels,
@@ -900,6 +967,10 @@ function criarLegenda(
 }
 
 
+/* =========================================================
+   DEFINIR TEXTO
+========================================================= */
+
 function definirTexto(
   id,
   valor
@@ -921,6 +992,10 @@ function definirTexto(
 }
 
 
+/* =========================================================
+   DASHBOARD VAZIO
+========================================================= */
+
 function aplicarDashboardVazio() {
 
   const dados = {
@@ -929,9 +1004,25 @@ function aplicarDashboardVazio() {
       0,
 
     por_tipo: {
-      MOP: 0,
-      SOP: 0,
-      EOP: 0
+
+      MOP:
+        0,
+
+      SOP:
+        0,
+
+      EOP:
+        0,
+
+      Corretiva:
+        0,
+
+      "Instalação":
+        0,
+
+      Retrofit:
+        0
+
     },
 
     por_etapa: {
@@ -979,6 +1070,7 @@ function aplicarDashboardVazio() {
   );
 
 }
+
 
 /* =========================================================
    LOGOUT

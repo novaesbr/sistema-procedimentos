@@ -2475,7 +2475,7 @@ app.get(
           supabase
             .from("procedimentos")
             .select(
-              "site, descricao_projeto"
+              "site, descricao_projeto, etapa"
             )
             .order(
               "id",
@@ -2590,15 +2590,45 @@ app.get(
               )
           );
 
+          const descricoesProjetosCompletas =
+  descricoesProjetos.filter(
+    descricao => {
 
-      res.json({
+      const procedimentosDaDescricao =
+        registros.filter(
+          item =>
+            item.descricao_projeto ===
+            descricao
+        );
 
-        sites,
 
-        descricoes_projetos:
-          descricoesProjetos,
+      if (
+        procedimentosDaDescricao.length === 0
+      ) {
+        return false;
+      }
 
-        documentos: [
+
+      return procedimentosDaDescricao.every(
+        item =>
+          item.etapa === "Completo"
+      );
+
+    }
+  );
+
+
+  res.json({
+
+    sites,
+  
+    descricoes_projetos:
+      descricoesProjetos,
+  
+    descricoes_projetos_completas:
+      descricoesProjetosCompletas,
+  
+    documentos: [
           "Principal",
           "Replica"
         ],
