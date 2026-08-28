@@ -1556,7 +1556,9 @@ app.get(
   async (req, res) => {
 
     if (!verificarSupabase(res)) {
+
       return;
+
     }
 
 
@@ -1569,97 +1571,171 @@ app.get(
       } = req.query;
 
 
-      let consulta =
-        supabase
-          .from("procedimentos")
-          .select(
-            "tipo_procedimento, tipo_documento, site, etapa"
-          );
+      const tamanhoLote =
+        1000;
+
+      let inicio =
+        0;
+
+      let registros =
+        [];
 
 
-      if (
-        site &&
-        site !== "Todos"
-      ) {
+      /*
+        Busca os procedimentos em lotes de 1000
+        para não ficar limitado ao máximo padrão
+        retornado pelo Supabase.
+      */
 
-        consulta =
-          consulta.eq(
-            "site",
-            site
-          );
+      while (true) {
+
+        const fim =
+          inicio +
+          tamanhoLote -
+          1;
+
+
+        let consulta =
+          supabase
+            .from("procedimentos")
+            .select(
+              "tipo_procedimento, tipo_documento, site, etapa, descricao_projeto"
+            );
+
+
+        if (
+          site &&
+          site !== "Todos"
+        ) {
+
+          consulta =
+            consulta.eq(
+              "site",
+              site
+            );
+
+        }
+
+
+        if (
+          documento &&
+          documento !== "Todos"
+        ) {
+
+          consulta =
+            consulta.eq(
+              "tipo_documento",
+              documento
+            );
+
+        }
+
+
+        if (
+          descricao_projeto &&
+          descricao_projeto !== "Todas"
+        ) {
+
+          consulta =
+            consulta.eq(
+              "descricao_projeto",
+              descricao_projeto
+            );
+
+        }
+
+
+        const {
+          data,
+          error
+        } =
+          await consulta
+            .range(
+              inicio,
+              fim
+            );
+
+
+        if (error) {
+
+          return res
+            .status(500)
+            .json({
+
+              erro:
+                "Erro ao carregar dashboard.",
+
+              detalhe:
+                error.message
+
+            });
+
+        }
+
+
+        const lote =
+          data || [];
+
+
+        registros.push(
+          ...lote
+        );
+
+
+        /*
+          Se vier menos de 1000 registros,
+          chegamos ao último lote.
+        */
+
+        if (
+          lote.length <
+          tamanhoLote
+        ) {
+
+          break;
+
+        }
+
+
+        inicio +=
+          tamanhoLote;
 
       }
 
 
-      if (
-        documento &&
-        documento !== "Todos"
-      ) {
-
-        consulta =
-          consulta.eq(
-            "tipo_documento",
-            documento
-          );
-
-      }
-
-      if (
-        descricao_projeto &&
-        descricao_projeto !== "Todas"
-      ) {
-      
-        consulta =
-          consulta.eq(
-            "descricao_projeto",
-            descricao_projeto
-          );
-      
-      }
-
-
-      const {
-        data,
-        error
-      } =
-        await consulta;
-
-
-      if (error) {
-
-        return res
-          .status(500)
-          .json({
-            erro:
-              "Erro ao carregar dashboard.",
-            detalhe:
-              error.message
-          });
-
-      }
-
-
-      const registros =
-        data || [];
-
+      /* =====================================================
+         CONTAGEM POR TIPO
+      ===================================================== */
 
       const porTipo = {
+
         MOP: 0,
         SOP: 0,
         EOP: 0
+
       };
 
 
+      /* =====================================================
+         CONTAGEM POR ETAPA
+      ===================================================== */
+
       const porEtapa = {};
+
 
       ETAPAS_VALIDAS.forEach(
         etapa => {
 
-          porEtapa[etapa] = 0;
+          porEtapa[etapa] =
+            0;
 
         }
       );
 
+
+      /* =====================================================
+         PROCESSAR REGISTROS
+      ===================================================== */
 
       registros.forEach(
         item => {
@@ -1693,6 +1769,10 @@ app.get(
       );
 
 
+      /* =====================================================
+         RESPOSTA
+      ===================================================== */
+
       res.json({
 
         total:
@@ -1709,13 +1789,22 @@ app.get(
 
     } catch (erro) {
 
+      console.error(
+        "Erro interno ao carregar dashboard:",
+        erro
+      );
+
+
       res
         .status(500)
         .json({
+
           erro:
             "Erro interno ao carregar dashboard.",
+
           detalhe:
             erro.message
+
         });
 
     }
