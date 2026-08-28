@@ -429,7 +429,10 @@ const ETAPAS_VALIDAS = [
 const TIPOS_VALIDOS = [
   "MOP",
   "SOP",
-  "EOP"
+  "EOP",
+  "Corretiva",
+  "Instalação",
+  "Retrofit"
 ];
 
 const DOCUMENTOS_VALIDOS = [
@@ -457,7 +460,47 @@ function texto(valor) {
 
 function normalizarTipo(valor) {
 
-  return texto(valor).toUpperCase();
+  const valorTexto =
+    texto(valor);
+
+  if (!valorTexto) {
+    return "";
+  }
+
+
+  const valorComparacao =
+    valorTexto
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+
+  if (valorComparacao === "mop") {
+    return "MOP";
+  }
+
+  if (valorComparacao === "sop") {
+    return "SOP";
+  }
+
+  if (valorComparacao === "eop") {
+    return "EOP";
+  }
+
+  if (valorComparacao === "corretiva") {
+    return "Corretiva";
+  }
+
+  if (valorComparacao === "instalacao") {
+    return "Instalação";
+  }
+
+  if (valorComparacao === "retrofit") {
+    return "Retrofit";
+  }
+
+
+  return valorTexto;
 }
 
 
@@ -1771,8 +1814,11 @@ app.get(
 
         MOP: 0,
         SOP: 0,
-        EOP: 0
-
+        EOP: 0,
+        Corretiva: 0,
+        "Instalação": 0,
+        Retrofit: 0
+      
       };
 
 

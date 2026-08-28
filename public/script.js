@@ -5,7 +5,10 @@ let graficoEtapas = null;
 const coresTipos = [
   "#2f56b3",
   "#38bdf8",
-  "#f97316"
+  "#f97316",
+  "#ef4444",
+  "#8b5cf6",
+  "#14b8a6"
 ];
 
 const coresEtapas = [
@@ -517,16 +520,36 @@ function criarGraficoTipos(
 
 
   const valores = [
+
     dados.por_tipo?.MOP || 0,
+
     dados.por_tipo?.SOP || 0,
-    dados.por_tipo?.EOP || 0
+
+    dados.por_tipo?.EOP || 0,
+
+    dados.por_tipo?.Corretiva || 0,
+
+    dados.por_tipo?.["Instalação"] || 0,
+
+    dados.por_tipo?.Retrofit || 0
+
   ];
 
 
   const labels = [
+
     "MOP",
+
     "SOP",
-    "EOP"
+
+    "EOP",
+
+    "Corretiva",
+
+    "Instalação",
+
+    "Retrofit"
+
   ];
 
 
