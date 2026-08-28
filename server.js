@@ -722,135 +722,189 @@ app.get(
       } = req.query;
 
 
-      let consulta =
-        supabase
-          .from("procedimentos")
-          .select("*")
-          .order(
-            "criado_em",
-            {
-              ascending: false
-            }
-          );
+      const tamanhoLote =
+        1000;
+
+      let inicio =
+        0;
+
+      let registros =
+        [];
 
 
-      if (
-        site &&
-        site !== "Todos"
-      ) {
+      while (true) {
 
-        consulta =
-          consulta.eq(
-            "site",
-            site
-          );
-
-      }
+        const fim =
+          inicio +
+          tamanhoLote -
+          1;
 
 
-      if (
-        documento &&
-        documento !== "Todos"
-      ) {
-
-        consulta =
-          consulta.eq(
-            "tipo_documento",
-            documento
-          );
-
-      }
-
-      if (
-        descricao_projeto &&
-        descricao_projeto !== "Todas"
-      ) {
-      
-        consulta =
-          consulta.eq(
-            "descricao_projeto",
-            descricao_projeto
-          );
-      
-      }
+        let consulta =
+          supabase
+            .from("procedimentos")
+            .select("*")
+            .order(
+              "criado_em",
+              {
+                ascending: false
+              }
+            );
 
 
-      if (
-        tipo &&
-        tipo !== "Todos"
-      ) {
+        if (
+          site &&
+          site !== "Todos"
+        ) {
 
-        consulta =
-          consulta.eq(
-            "tipo_procedimento",
-            tipo
-          );
+          consulta =
+            consulta.eq(
+              "site",
+              site
+            );
 
-      }
-
-
-      if (
-        etapa &&
-        etapa !== "Todas"
-      ) {
-
-        consulta =
-          consulta.eq(
-            "etapa",
-            etapa
-          );
-
-      }
+        }
 
 
-      if (busca) {
+        if (
+          documento &&
+          documento !== "Todos"
+        ) {
 
-        const termo =
-          texto(busca)
-            .replaceAll(",", " ");
+          consulta =
+            consulta.eq(
+              "tipo_documento",
+              documento
+            );
 
-
-        consulta =
-          consulta.or(
-            [
-              `titulo.ilike.%${termo}%`,
-              `cliente.ilike.%${termo}%`,
-              `site.ilike.%${termo}%`,
-              `numero_release.ilike.%${termo}%`,
-              `descricao_projeto.ilike.%${termo}%`
-            ].join(",")
-          );
-
-      }
+        }
 
 
-      const {
-        data,
-        error
-      } =
-        await consulta;
+        if (
+          descricao_projeto &&
+          descricao_projeto !== "Todas"
+        ) {
+
+          consulta =
+            consulta.eq(
+              "descricao_projeto",
+              descricao_projeto
+            );
+
+        }
 
 
-      if (error) {
+        if (
+          tipo &&
+          tipo !== "Todos"
+        ) {
 
-        return res
-          .status(500)
-          .json({
-            erro:
-              "Erro ao consultar procedimentos.",
-            detalhe:
-              error.message
-          });
+          consulta =
+            consulta.eq(
+              "tipo_procedimento",
+              tipo
+            );
+
+        }
+
+
+        if (
+          etapa &&
+          etapa !== "Todas"
+        ) {
+
+          consulta =
+            consulta.eq(
+              "etapa",
+              etapa
+            );
+
+        }
+
+
+        if (busca) {
+
+          const termo =
+            texto(busca)
+              .replaceAll(",", " ");
+
+
+          consulta =
+            consulta.or(
+              [
+                `titulo.ilike.%${termo}%`,
+                `cliente.ilike.%${termo}%`,
+                `site.ilike.%${termo}%`,
+                `numero_release.ilike.%${termo}%`,
+                `descricao_projeto.ilike.%${termo}%`
+              ].join(",")
+            );
+
+        }
+
+
+        const {
+          data,
+          error
+        } =
+          await consulta
+            .range(
+              inicio,
+              fim
+            );
+
+
+        if (error) {
+
+          return res
+            .status(500)
+            .json({
+              erro:
+                "Erro ao consultar procedimentos.",
+              detalhe:
+                error.message
+            });
+
+        }
+
+
+        const lote =
+          data || [];
+
+
+        registros.push(
+          ...lote
+        );
+
+
+        if (
+          lote.length <
+          tamanhoLote
+        ) {
+
+          break;
+
+        }
+
+
+        inicio +=
+          tamanhoLote;
 
       }
 
 
       res.json(
-        data || []
+        registros
       );
 
 
     } catch (erro) {
+
+      console.error(
+        "Erro interno ao consultar procedimentos:",
+        erro
+      );
+
 
       res
         .status(500)
@@ -1650,6 +1704,12 @@ app.get(
           error
         } =
           await consulta
+            .order(
+              "id",
+              {
+                ascending: true
+              }
+            )
             .range(
               inicio,
               fim
@@ -1821,6 +1881,11 @@ app.get(
   "/api/filtros",
   async (req, res) => {
 
+    if (!verificarSupabase(res)) {
+      return;
+    }
+
+
     try {
 
       const {
@@ -1828,48 +1893,98 @@ app.get(
       } = req.query;
 
 
-      let consulta =
-        supabase
-          .from("procedimentos")
-          .select(
-            "site, descricao_projeto"
-          );
+      const tamanhoLote =
+        1000;
+
+      let inicio =
+        0;
+
+      let registros =
+        [];
 
 
-      if (
-        site &&
-        site !== "Todos"
-      ) {
+      while (true) {
 
-        consulta =
-          consulta.eq(
-            "site",
-            site
-          );
-
-      }
+        const fim =
+          inicio +
+          tamanhoLote -
+          1;
 
 
-      const {
-        data,
-        error
-      } =
-        await consulta;
+        let consulta =
+          supabase
+            .from("procedimentos")
+            .select(
+              "site, descricao_projeto"
+            )
+            .order(
+              "id",
+              {
+                ascending: true
+              }
+            );
 
 
-      if (error) {
+        if (
+          site &&
+          site !== "Todos"
+        ) {
 
-        return res
-          .status(500)
-          .json({
+          consulta =
+            consulta.eq(
+              "site",
+              site
+            );
 
-            erro:
-              "Erro ao carregar filtros.",
+        }
 
-            detalhe:
-              error.message
 
-          });
+        const {
+          data,
+          error
+        } =
+          await consulta
+            .range(
+              inicio,
+              fim
+            );
+
+
+        if (error) {
+
+          return res
+            .status(500)
+            .json({
+              erro:
+                "Erro ao carregar filtros.",
+              detalhe:
+                error.message
+            });
+
+        }
+
+
+        const lote =
+          data || [];
+
+
+        registros.push(
+          ...lote
+        );
+
+
+        if (
+          lote.length <
+          tamanhoLote
+        ) {
+
+          break;
+
+        }
+
+
+        inicio +=
+          tamanhoLote;
 
       }
 
@@ -1877,7 +1992,7 @@ app.get(
       const sites =
         [
           ...new Set(
-            (data || [])
+            registros
               .map(
                 item =>
                   item.site
@@ -1898,7 +2013,7 @@ app.get(
       const descricoesProjetos =
         [
           ...new Set(
-            (data || [])
+            registros
               .map(
                 item =>
                   item.descricao_projeto
@@ -1948,10 +2063,10 @@ app.get(
       res
         .status(500)
         .json({
-
           erro:
-            "Erro interno ao carregar filtros."
-
+            "Erro interno ao carregar filtros.",
+          detalhe:
+            erro.message
         });
 
     }
